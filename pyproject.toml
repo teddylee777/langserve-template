@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "langserve-template"
+version = "0.1.0"
+description = "Template github repo for langserve"
+authors = ["teddy <teddylee777@gmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "app" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+langserve = "^0.0.51"
+openai = "^1.14.2"
+uvicorn = "^0.23.2"
+pydantic = "^2.6.4"
+langchain = "^0.1.13"
+langchain-cli = "^0.0.21"
+
+[tool.poetry.group.dev.dependencies]
+langchain-cli = ">=0.0.15"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
