@@ -45,21 +45,21 @@ web: uvicorn app.server:app --host=0.0.0.0 --port=${PORT:-5000}
 ## 프로젝트 설정
 
 1. requirements.txt 생성
-    1. poetry 사용시 
+    - poetry 사용시 
     
     ```bash
     poetry export -f requirements.txt --output requirements.txt --without-hashes
     ```
     
 2. Procfile 생성
-    1. Procfile 생성 후 아래 내용을 기입
+   - Procfile 생성 후 아래 내용을 기입
     
     ```bash
-    web: uvicorn main:app --host=0.0.0.0 --port=${PORT:-8000}
+    web: uvicorn app.server:app --host=0.0.0.0 --port=${PORT:-5000}
     ```
     
 3. git init
-    1. github 에 소스코드 업로드
+    - github 에 소스코드 업로드
 
 ## Heroku
 
