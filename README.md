@@ -36,7 +36,7 @@ poetry run langchain app remove retrieval-agent
 
 app 패키지(폴더) 하위의 [s](http://server.py)erver.py 안에 app 으로 진입점 초기화 한다는 뜻
 
-![Untitled](LangServe%20+%20Heroku%2062f67faaf5684c638b0326bee7c04d9e/Untitled.png)
+![Untitled](images/0.png)
 
 ```bash
 web: uvicorn app.server:app --host=0.0.0.0 --port=${PORT:-5000}
@@ -71,7 +71,7 @@ heroku 대시보드에 접속하여 새로운 앱을 생성
 
 앱이름: `langserve-template` 으로 이미 생성해 놓았음
 
-![Untitled](LangServe%20+%20Heroku%2062f67faaf5684c638b0326bee7c04d9e/Untitled%201.png)
+![Untitled](images/1.png)
 
 터미널에 heroku init
 
