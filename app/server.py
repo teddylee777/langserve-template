@@ -24,10 +24,10 @@ app.add_middleware(
 
 @app.get("/")
 async def redirect_root_to_docs():
-    return RedirectResponse("/docs")
+    return RedirectResponse("/prompt/playground")
 
 
-add_routes(app, chain, path="/prompter", playground_type="chat")
+add_routes(app, chain, path="/prompt")
 
 
 class InputChat(BaseModel):
