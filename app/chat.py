@@ -1,7 +1,9 @@
 from langchain.chat_models import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts.chat import MessagesPlaceholder
+from dotenv import load_dotenv
 
+load_dotenv()
 
 # Declare a chain
 prompt = ChatPromptTemplate.from_messages(
