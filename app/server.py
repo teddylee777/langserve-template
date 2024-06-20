@@ -5,7 +5,8 @@ from typing import List, Union
 from langserve.pydantic_v1 import BaseModel, Field
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langserve import add_routes
-from app.chain import chain
+
+from app.chain import get_chain
 from app.chat import chain as chat_chain
 
 
@@ -26,15 +27,6 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-
-@app.get("/")
-async def redirect_root_to_docs():
-    return RedirectResponse("/prompt/playground")
-
-
-add_routes(app, chain, path="/prompt")
-
-
 class InputChat(BaseModel):
     """Input for the chat endpoint."""
 
@@ -43,6 +35,12 @@ class InputChat(BaseModel):
         description="The chat messages representing the current conversation.",
     )
 
+
+@app.get("/")
+async def redirect_root_to_docs():
+    return RedirectResponse("/prompt/playground")
+
+add_routes(app, get_chain('rag_prompt', 'InputChat'), path="/prompt")
 
 add_routes(
     app,
