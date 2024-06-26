@@ -96,3 +96,14 @@ heroku config:set LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 heroku config:set LANGCHAIN_PROJECT=LANGSERVE
 heroku config:set LANGCHAIN_API_KEY=이곳에_API_KEY_입력
 ```
+
+
+
+# 모듈 설명
+
+### server.py
+FastAPI 를 사용한 서버 시작
+
+### chat.py
+
+### chain.py

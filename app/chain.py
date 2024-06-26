@@ -1,29 +1,42 @@
-from langchain.chat_models import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
+from operator import itemgetter
+from typing import List, Tuple
 from langchain_core.output_parsers import StrOutputParser
-from dotenv import load_dotenv
+from langchain_core.runnables import RunnableMap, RunnablePassthrough
+from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
+from langserve.pydantic_v1 import BaseModel, Field
+from app.database import load_vector_database
+from app.prompts import CONDENSE_QUESTION_PROMPT, ANSWER_PROMPT
+from app.utils import combine_documents, format_chat_history, ensure_dict
 
-load_dotenv()
+class ChatHistory(BaseModel):
+    chat_history: List[Tuple[str, str]] = Field(
+        ...,
+        extra={"widget": {"type": "chat", "input": "question"}},
+    )
+    question: str
 
-with open("openai.txt") as f:
-    docs = f.read()
+def create_chain():
+    retriever = load_vector_database()
 
-template = """Based on the following instrutions, help me write a good prompt TEMPLATE for the following task:
+    _inputs = RunnableMap(
+        standalone_question=RunnablePassthrough().assign(
+            chat_history=lambda x: format_chat_history(ensure_dict(x).get("chat_history", []))
+        )
+        | CONDENSE_QUESTION_PROMPT
+        | ChatOpenAI(temperature=0)
+        | StrOutputParser(),
+    )
 
-{task}
+    _context = {
+        "context": itemgetter("standalone_question") | retriever | combine_documents,
+        "question": lambda x: x["standalone_question"],
+    }
 
-Notably, this prompt TEMPLATE expects that additional information will be provided by the end user of the prompt you are writing. For the piece(s) of information that they are expected to provide, please write the prompt in a format where they can be formatted into as if a Python f-string.
+    claude_model = ChatAnthropic(model="claude-3-sonnet-20240229")
 
-When you have enough information to create a good prompt, return the prompt in the following format:\n\n```prompt\n\n...\n\n```
-
-Instructions for a good prompt:
-
-{instructions}
-"""
-prompt = ChatPromptTemplate.from_messages([("system", template)]).partial(
-    instructions=docs
-)
-
-chain = (
-    prompt | ChatOpenAI(model="gpt-4-1106-preview", temperature=0) | StrOutputParser()
-)
+    conversational_qa_chain = (
+        _inputs | _context | ANSWER_PROMPT | claude_model | StrOutputParser()
+    )
+    
+    return conversational_qa_chain.with_types(input_type=ChatHistory)
